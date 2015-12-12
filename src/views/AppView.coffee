@@ -21,8 +21,9 @@ class window.AppView extends Backbone.View
 
   handleWinner: (winnerName) ->
     @$el.children().detach()
-
     @$el.text("#{@model.get('winner')} is the winner!")
+    @$el.append(new HandView(collection: @model.get 'playerHand').el)
+    @$el.append(new HandView(collection: @model.get 'dealerHand').el)
 
   disableHit: ->
 

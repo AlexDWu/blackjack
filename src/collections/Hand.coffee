@@ -17,15 +17,18 @@ class window.Hand extends Backbone.Collection
 
   # this is a dealer only method
   play: ->
-    if(_.min(@scores) > 21)
+    if not(@first().get('revealed'))
+      @first().flip()
+    if(_.min(@scores()) > 21)
       return
-    if(_.max(@scores) > 17)
+    if(_.max(@scores()) > 17)
       @trigger('stand')
       return
-    if(_.min(@scores) >= 17)
+    if(_.min(@scores()) >= 17)
       @trigger('stand')
       return
     @hit()
+    @play()
 
   hasAce: -> @reduce (memo, card) ->
     memo or card.get('value') is 1
