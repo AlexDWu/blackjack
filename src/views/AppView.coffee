@@ -10,6 +10,7 @@ class window.AppView extends Backbone.View
     'click .stand-button': -> @model.get('playerHand').stand()
 
   initialize: ->
+    @listenTo(@model, 'change:winner', @handleWinner)
     @render()
 
   render: ->
@@ -17,4 +18,13 @@ class window.AppView extends Backbone.View
     @$el.html @template()
     @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
+
+  handleWinner: (winnerName) ->
+    @$el.children().detach()
+
+    @$el.text("#{@model.get('winner')} is the winner!")
+
+  disableHit: ->
+
+  disableStand: ->
 
