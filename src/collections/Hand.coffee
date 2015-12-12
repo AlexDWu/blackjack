@@ -7,6 +7,28 @@ class window.Hand extends Backbone.Collection
     @add(@deck.pop())
     @last()
 
+  stand: ->
+    @trigger('stand')
+
+  # this is a dealer only method
+  play: ->
+    # flip hole card
+    # check the score
+    @hit() while Math.max(@scores()) < 17
+
+    #if max is less than or equal to 21 stand
+    if(Math.max(@scores()) <= 21)
+      @trigger('stand')
+      return
+
+    @hit() while Math.min(@scores()) < 17
+      
+    # if math is less than or equal to 21 stand
+    if(Math.min(@scores()) <= 21)
+      @trigger('stand')
+    else
+      @trigger('bust')
+
 
   hasAce: -> @reduce (memo, card) ->
     memo or card.get('value') is 1
