@@ -8,14 +8,24 @@ describe 'hand',  ->
 
   beforeEach ->
     deck = new Deck()
-    hand = new Hand([], deck, false)
     cards = []
     for i in [0...13] by 1
       cards.push(new Card(rank: i, suit: 0))
+    hand = new Hand([], deck, false)
     sinon.spy(hand, 'trigger')
 
   afterEach ->
     hand.trigger.restore()
+
+  describe 'initialize', ->
+    it 'should initialize with the status of playable', ->
+      hand = new Hand([cards[4], cards[5]], deck, false)
+      expect(hand.status).to.equal('playable')
+      
+    it "it should set it's status to splittable if both cards are the same rank", ->
+      hand = new Hand([cards[4], cards[4]], deck, false)
+      expect(hand.status).to.equal('splittable')
+      expect(hand.trigger).to.have.been.calledWith('splittable')
 
   describe 'stand', ->
     it 'should have a `stand` function', ->

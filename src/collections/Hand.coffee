@@ -1,7 +1,15 @@
 class window.Hand extends Backbone.Collection
   model: Card
 
+  status: null
+  score: null
+  bet: null
+
   initialize: (array, @deck, @isDealer) ->
+    @status = "playable" #can be: `busted`, `stand`, `splittable` 
+    if (@first and @last() and @last().get('rankName') == @first().get('rankName'))
+      @status = "splittable"
+      @trigger('splittable')
 
   hit: ->
     @add(@deck.pop())
@@ -9,10 +17,16 @@ class window.Hand extends Backbone.Collection
     @last()
 
   stand: ->
+    @status = 'stand'
+    playerScore = @scores()
+    playerScore = if playerScore[1] > 21 then playerScore[0] else playerScore[1]
+    @score = playerScore
     @trigger('stand')
 
   checkBust: ->
     if (_.min(@scores()) > 21)
+      @status = 'busted'
+      @score = @scores()[1]
       @trigger('bust')
 
   # this is a dealer only method
@@ -21,10 +35,8 @@ class window.Hand extends Backbone.Collection
       @first().flip()
     if(_.min(@scores()) > 21)
       return
-    if(_.max(@scores()) > 17)
-      @trigger('stand')
-      return
-    if(_.min(@scores()) >= 17)
+    if(_.max(@scores()) > 17 or _.min(@scores()) >= 17)
+      @status = 'stand'
       @trigger('stand')
       return
     @hit()
